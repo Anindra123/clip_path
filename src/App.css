@@ -1,0 +1,22 @@
+#root {
+    max-width: 1280px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.image_canvas {
+    width: 300px;
+    height: 300px;
+    border: 1px solid #242424;
+    position: relative;
+    user-select: none;
+}
+.clip_path_pointer {
+    width: 30px;
+    height: 30px;
+    border-radius: 100%;
+    background-color: rgba(255, 0, 0, 0.5);
+    position: absolute;
+    cursor: grab;
+    z-index: 1;
+}
