@@ -1,22 +1,64 @@
 #root {
-    max-width: 1280px;
-    margin: 0 auto;
-    text-align: center;
+  max-width: 1280px;
+  margin: 0 auto;
+  text-align: center;
 }
 
 .image_canvas {
-    width: 300px;
-    height: 300px;
-    border: 1px solid #242424;
-    position: relative;
-    user-select: none;
+  width: 300px;
+  height: 300px;
+  border: 1px solid #242424;
+  position: relative;
+  user-select: none;
 }
 .clip_path_pointer {
-    width: 30px;
-    height: 30px;
-    border-radius: 100%;
-    background-color: rgba(255, 0, 0, 0.5);
-    position: absolute;
-    cursor: grab;
-    z-index: 1;
+  width: 30px;
+  height: 30px;
+  border-radius: 100%;
+  background-color: rgba(255, 0, 0, 0.5);
+  position: absolute;
+  cursor: grab;
+  z-index: 1;
+}
+
+.preset_button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 5px;
+  width: 70px;
+  height: 70px;
+  border-radius: 8px;
+  border: 1px solid #242424;
+  cursor: pointer;
+}
+
+.preset_button_icon {
+  width: 30px;
+  height: 30px;
+  background-color: black;
+}
+
+.preset_button_title {
+  font-size: 10px;
+}
+.preset_bar {
+  position: fixed;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 400px;
+  height: 100vh;
+  padding: 20px;
+  background-color: #f1f1f1;
+}
+
+.preset_button_container {
+  background-color: rgba(0, 0, 0, 0.1);
+  display: grid;
+  border-radius: 8px;
+  padding: 10px;
+  grid-template-columns: repeat(4, 1fr);
+  justify-items: center;
 }

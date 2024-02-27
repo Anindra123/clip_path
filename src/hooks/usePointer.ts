@@ -3,17 +3,24 @@ const CANVAS_WIDTH = 300;
 const POINTER_SIZE = 30;
 const MAX_SIZE = CANVAS_WIDTH - POINTER_SIZE;
 interface usePointerProp {
-  x: number;
-  y: number;
+  location: {
+    x: number;
+    y: number;
+
+  },
+  handleSetPath: (new_path: { x: number; y: number }, id: number) => void;
+  id: number
 }
 
-export default function usePointer(location: usePointerProp) {
-  const [pointerLocation, setPointerLocation] = useState(location);
+export default function usePointer({ location, handleSetPath, id }: usePointerProp) {
+  // const [pointerLocation, setPointerLocation] = useState(location);
   const [pointerPosition, setPointerPosition] = useState({
-    x: MAX_SIZE * (pointerLocation.x / 100),
-    y: MAX_SIZE * (pointerLocation.y / 100),
+    x: MAX_SIZE * (location.x / 100),
+    y: MAX_SIZE * (location.y / 100),
   });
+
   const initial_position = { ...pointerPosition };
+
   function handlePointerMouseDown(
     event: React.MouseEvent<HTMLDivElement, MouseEvent>,
   ) {
@@ -23,6 +30,7 @@ export default function usePointer(location: usePointerProp) {
     document.body.addEventListener("mousemove", handlePointerMouseMove);
     document.body.addEventListener("mouseup", handlePointerMouseUp);
   }
+
   function handlePointerMouseMove(event: MouseEvent) {
     const new_x_position =
       event.clientX -
@@ -38,17 +46,21 @@ export default function usePointer(location: usePointerProp) {
     const pointerLocationX = 100 * (boundedX / MAX_SIZE);
     const pointerLocationY = 100 * (boundedY / MAX_SIZE);
 
+    pointerPosition.x = boundedX;
+    pointerPosition.y = boundedY;
+
     setPointerPosition({ x: boundedX, y: boundedY });
-    setPointerLocation({ x: pointerLocationX, y: pointerLocationY });
+    handleSetPath({ x: pointerLocationX, y: pointerLocationY }, id);
+    // setPointerLocation({ x: pointerLocationX, y: pointerLocationY });
   }
+
   function handlePointerMouseUp() {
     document.body.removeEventListener("mousemove", handlePointerMouseMove);
     document.body.removeEventListener("mouseup", handlePointerMouseUp);
   }
 
   return [
-    pointerLocation.x,
-    pointerLocation.y,
+    // pointerLocation.x, pointerLocation.y,
     pointerPosition,
     handlePointerMouseDown,
     handlePointerMouseUp,

@@ -1,30 +1,35 @@
+import { useState } from "react";
 import BackgroundImage from "../assets/pittsburgh.jpg";
-import PointerFactoryService from "../service/PointerFactoryService";
+import Pointer from "./Pointer";
+import CreatePathString from "../util/CreatePathString";
 
-export default function Canvas() {
-  const [xLocation1, yLocation1, Pointer1] = PointerFactoryService({
-    x: 50,
-    y: 10,
-  });
+interface CanvasProp {
+  activePreset: { x: number; y: number }[];
+}
 
-  const [xLocation2, yLocation2, Pointer2] = PointerFactoryService({
-    x: 10,
-    y: 50,
-  });
+export default function Canvas({ activePreset }: CanvasProp) {
+  // const [path, setPath] = useState<{ x: number; y: number }[]>([]);
+  const [path, setPath] = useState(activePreset);
+  console.log(path);
 
-  const [xLocation3, yLocation3, Pointer3] = PointerFactoryService({
-    x: 80,
-    y: 50,
-  });
+  function handleSetPath(updated_path: { x: number; y: number }, id: number) {
+    const temp_path = [...path];
+    temp_path[id] = updated_path;
+    setPath(temp_path);
+  }
   return (
     <div className="image_canvas">
-      {Pointer1}
-      {Pointer2}
-      {Pointer3}
+      {activePreset.map((coordinates, id) => (
+        <Pointer
+          handleSetPath={handleSetPath}
+          coordinates={coordinates}
+          id={id}
+        />
+      ))}
       <img
         src={BackgroundImage}
         style={{
-          clipPath: `polygon(${xLocation1}% ${yLocation1}%,${xLocation2}% ${yLocation2}%,${xLocation3}% ${yLocation3}%)`,
+          clipPath: CreatePathString(path),
         }}
         width={300}
         height={300}
