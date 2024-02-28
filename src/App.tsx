@@ -13,7 +13,7 @@ function App() {
 
   return (
     <>
-      <Canvas activePreset={activePreset} />
+      <Canvas activePreset={activePreset} setActivePreset={setActivePreset} />
       <PresetBar handlePresetButtonClick={handlePresetButtonClick} />
     </>
   );

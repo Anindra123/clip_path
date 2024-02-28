@@ -1,3 +1,5 @@
+import { useEffect, useState } from "react";
+import { MAX_SIZE } from "../constants/Sizes";
 import usePointer from "../hooks/usePointer";
 
 interface PointerProps {
@@ -14,10 +16,19 @@ export default function Pointer({
   handleSetPath,
   id,
 }: PointerProps) {
-  const [pointerPosition, handlePointerMouseDown, handlePointerMouseUp] =
-    usePointer({ location: coordinates, handleSetPath: handleSetPath, id: id });
+  const [location, setLocation] = useState<null | { x: number; y: number }>(
+    null
+  );
+  const [handlePointerMouseDown, handlePointerMouseUp] = usePointer({
+    location: coordinates,
+    handleSetPath: handleSetPath,
+    id: id,
+    setLocation: setLocation,
+  });
 
-  //   setPath([coordinates]);
+  useEffect(() => {
+    setLocation(null);
+  }, [coordinates]);
 
   return (
     <div
@@ -25,8 +36,8 @@ export default function Pointer({
       onMouseDown={(e) => handlePointerMouseDown(e)}
       onMouseUp={() => handlePointerMouseUp()}
       style={{
-        top: `${pointerPosition.y}px`,
-        left: `${pointerPosition.x}px`,
+        top: `${location ? location.y : MAX_SIZE * (coordinates.y / 100)}px`,
+        left: `${location ? location.x : MAX_SIZE * (coordinates.x / 100)}px`,
       }}
     ></div>
   );
