@@ -7,15 +7,15 @@ interface PointerProps {
     x: number;
     y: number;
   };
-  // handleSetPath: (new_path: { x: number; y: number }, id: number) => void;
-  // id: number;
+  handleSetPath: (new_path: { x: number; y: number }, id: number) => void;
+  id: number;
 }
 
 export default function Pointer({
   coordinates,
-}: // handleSetPath,
-// id,
-PointerProps) {
+  handleSetPath,
+  id,
+}: PointerProps) {
   const temp_location = { ...coordinates };
   temp_location.x = MAX_SIZE * (temp_location.x / 100);
   temp_location.y = MAX_SIZE * (temp_location.y / 100);
@@ -24,28 +24,29 @@ PointerProps) {
     x: temp_location.x,
     y: temp_location.y,
   });
-  const [pathLocation, setPathLocation] = useState<{ x: number; y: number }>({
-    ...coordinates,
-  });
+
   const [handlePointerMouseDown, handlePointerMouseUp] = usePointer({
     pointerLocation: { ...location },
-    // handleSetPath: handleSetPath,
-    // id: id,
     setLocation: setLocation,
-    setPathLocation: setPathLocation,
+    handleSetPath: handleSetPath,
+    id: id,
   });
 
   useEffect(() => {
     const temp_location = { ...coordinates };
+
     temp_location.x = MAX_SIZE * (temp_location.x / 100);
     temp_location.y = MAX_SIZE * (temp_location.y / 100);
 
+    if (temp_location.x <= 0) temp_location.x -= 15;
+    if (temp_location.x >= MAX_SIZE) temp_location.x += 15;
+    if (temp_location.y <= 0) temp_location.y -= 15;
+    if (temp_location.y >= MAX_SIZE) temp_location.y += 15;
+
     setLocation({ x: temp_location.x, y: temp_location.y });
-    setPathLocation({ ...coordinates });
   }, [coordinates]);
 
-  return [
-    pathLocation,
+  return (
     <div
       className="clip_path_pointer"
       onMouseDown={(e) => handlePointerMouseDown(e)}
@@ -54,6 +55,6 @@ PointerProps) {
         top: `${location.y}px`,
         left: `${location.x}px`,
       }}
-    ></div>,
-  ] as const;
+    ></div>
+  );
 }

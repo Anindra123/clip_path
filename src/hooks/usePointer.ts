@@ -6,13 +6,12 @@ interface usePointerProp {
     y: number;
 
   },
-  // handleSetPath: (new_path: { x: number; y: number }, id: number) => void;
+  handleSetPath: (new_path: { x: number; y: number }, id: number) => void;
   setLocation: React.Dispatch<React.SetStateAction<{ x: number, y: number }>>;
-  setPathLocation: React.Dispatch<React.SetStateAction<{ x: number, y: number }>>;
-  // id: number
+  id: number
 }
 
-export default function usePointer({ pointerLocation, setLocation, setPathLocation }: usePointerProp) {
+export default function usePointer({ pointerLocation, setLocation, handleSetPath, id }: usePointerProp) {
 
   const temp_location = { ...pointerLocation };
 
@@ -40,18 +39,19 @@ export default function usePointer({ pointerLocation, setLocation, setPathLocati
       event.clientY -
       (initial_position.y === 0 ? event.clientY : initial_position.y);
 
-    const boundedX = Math.max(Math.min(new_x_position, MAX_SIZE), 0);
-    const boundedY = Math.max(Math.min(new_y_position, MAX_SIZE), 0);
+
+
+    const boundedX = Math.max(Math.min(new_x_position, MAX_SIZE + 15), -15);
+    const boundedY = Math.max(Math.min(new_y_position, MAX_SIZE + 15), -15);
 
     const pointerLocationX = 100 * ((boundedX) / MAX_SIZE);
-    const pointerLocationY = 100 * (boundedY / MAX_SIZE);
+    const pointerLocationY = 100 * ((boundedY) / MAX_SIZE);
 
-    // const clip_locationX = Math.max(pointerLocationX, 0);
-    // const clip_locationY = Math.max(pointerLocationY, 0);
+    const clip_locationX = Math.max(Math.min(pointerLocationX, 100), 0);
+    const clip_locationY = Math.max(Math.min(pointerLocationY, 100), 0);
 
     setLocation({ x: boundedX, y: boundedY });
-    setPathLocation({ x: pointerLocationX, y: pointerLocationY })
-    // handleSetPath({ x: pointerLocationX, y: pointerLocationY }, id);
+    handleSetPath({ x: clip_locationX, y: clip_locationY }, id);
   }
 
   function handlePointerMouseUp() {
