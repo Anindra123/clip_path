@@ -1,8 +1,10 @@
 import BackgroundImage from "../assets/pittsburgh.jpg";
-import Pointer from "./Pointer";
+
 import CreatePathString from "../util/CreatePathString";
 import Indicator from "./Indicator";
 import { CONTAINER_SIZE } from "../constants/Sizes";
+import { useEffect, useState } from "react";
+import Pointer from "./Pointer";
 
 interface CanvasProp {
   activePreset: { x: number; y: number }[];
@@ -12,11 +14,19 @@ interface CanvasProp {
 }
 
 export default function Canvas({ activePreset, setActivePreset }: CanvasProp) {
+  const [path, setPath] = useState<{ x: number; y: number }[]>([
+    ...activePreset,
+  ]);
+
   function handleSetPath(updated_path: { x: number; y: number }, id: number) {
-    const temp_path = [...activePreset];
+    const temp_path = [...path];
     temp_path[id] = updated_path;
-    setActivePreset(temp_path);
+    setPath(temp_path);
   }
+
+  useEffect(() => {
+    setPath([...activePreset]);
+  }, [activePreset]);
 
   function handleSetPoint(e: React.MouseEvent<SVGPolylineElement, MouseEvent>) {
     const image_canvas = document.querySelector(".image_canvas");
@@ -30,7 +40,7 @@ export default function Canvas({ activePreset, setActivePreset }: CanvasProp) {
 
     const curr_id = Number(e.currentTarget.id);
 
-    const temp_path = [...activePreset];
+    const temp_path = [...path];
 
     temp_path.splice(curr_id + 1, 0, { x: pointerX, y: pointerY });
 
@@ -55,14 +65,14 @@ export default function Canvas({ activePreset, setActivePreset }: CanvasProp) {
           zIndex: 10,
         }}
       >
-        {activePreset.map((coord, id) =>
-          id < activePreset.length - 1 ? (
+        {path.map((coord, id) =>
+          id < path.length - 1 ? (
             <Indicator
               handleSetPoint={handleSetPoint}
               point1={{ x1: coord.x, y1: coord.y }}
               point2={{
-                x2: activePreset[id + 1]?.x,
-                y2: activePreset[id + 1]?.y,
+                x2: path[id + 1]?.x,
+                y2: path[id + 1]?.y,
               }}
               key={id}
               id={id}
@@ -71,7 +81,7 @@ export default function Canvas({ activePreset, setActivePreset }: CanvasProp) {
             <Indicator
               handleSetPoint={handleSetPoint}
               point1={{ x1: coord.x, y1: coord.y }}
-              point2={{ x2: activePreset[0]?.x, y2: activePreset[0]?.y }}
+              point2={{ x2: path[0]?.x, y2: path[0]?.y }}
               key={id}
               id={id}
             />
@@ -81,7 +91,7 @@ export default function Canvas({ activePreset, setActivePreset }: CanvasProp) {
       <img
         src={BackgroundImage}
         style={{
-          clipPath: CreatePathString(activePreset),
+          clipPath: CreatePathString(path),
         }}
         width={300}
         height={300}

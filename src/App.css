@@ -34,6 +34,15 @@
   cursor: pointer;
 }
 
+.preset_button.active {
+  background-color: black;
+  border: 1px solid #f1f1f1;
+  color: #f1f1f1;
+}
+
+.preset_button.active .preset_button_icon {
+  background-color: #f1f1f1;
+}
 .preset_button_icon {
   width: 30px;
   height: 30px;

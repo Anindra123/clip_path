@@ -3,20 +3,25 @@ import CreatePathString from "../util/CreatePathString";
 interface PresetButtonProp {
   preset_path: { x: number; y: number }[];
   title: string;
-
   handlePresetButtonClick: (current_preset: { x: number; y: number }[]) => void;
+  setCurrentSelected: React.Dispatch<React.SetStateAction<string>>;
+  currentSelected: string;
 }
 
 export default function PresetButton({
   preset_path,
   title,
   handlePresetButtonClick,
+  setCurrentSelected,
+  currentSelected,
 }: PresetButtonProp) {
   return (
     <a
-      className="preset_button"
+      className={`preset_button ${currentSelected === title ? "active" : ""}`}
       role="button"
       onClick={() => {
+        setCurrentSelected(title);
+
         handlePresetButtonClick(preset_path);
       }}
     >
