@@ -7,38 +7,53 @@ interface PointerProps {
     x: number;
     y: number;
   };
-  handleSetPath: (new_path: { x: number; y: number }, id: number) => void;
-  id: number;
+  // handleSetPath: (new_path: { x: number; y: number }, id: number) => void;
+  // id: number;
 }
 
 export default function Pointer({
   coordinates,
-  handleSetPath,
-  id,
-}: PointerProps) {
-  const [location, setLocation] = useState<null | { x: number; y: number }>(
-    null
-  );
+}: // handleSetPath,
+// id,
+PointerProps) {
+  const temp_location = { ...coordinates };
+  temp_location.x = MAX_SIZE * (temp_location.x / 100);
+  temp_location.y = MAX_SIZE * (temp_location.y / 100);
+
+  const [location, setLocation] = useState<{ x: number; y: number }>({
+    x: temp_location.x,
+    y: temp_location.y,
+  });
+  const [pathLocation, setPathLocation] = useState<{ x: number; y: number }>({
+    ...coordinates,
+  });
   const [handlePointerMouseDown, handlePointerMouseUp] = usePointer({
-    location: coordinates,
-    handleSetPath: handleSetPath,
-    id: id,
+    pointerLocation: { ...location },
+    // handleSetPath: handleSetPath,
+    // id: id,
     setLocation: setLocation,
+    setPathLocation: setPathLocation,
   });
 
   useEffect(() => {
-    setLocation(null);
+    const temp_location = { ...coordinates };
+    temp_location.x = MAX_SIZE * (temp_location.x / 100);
+    temp_location.y = MAX_SIZE * (temp_location.y / 100);
+
+    setLocation({ x: temp_location.x, y: temp_location.y });
+    setPathLocation({ ...coordinates });
   }, [coordinates]);
 
-  return (
+  return [
+    pathLocation,
     <div
       className="clip_path_pointer"
       onMouseDown={(e) => handlePointerMouseDown(e)}
       onMouseUp={() => handlePointerMouseUp()}
       style={{
-        top: `${location ? location.y : MAX_SIZE * (coordinates.y / 100)}px`,
-        left: `${location ? location.x : MAX_SIZE * (coordinates.x / 100)}px`,
+        top: `${location.y}px`,
+        left: `${location.x}px`,
       }}
-    ></div>
-  );
+    ></div>,
+  ] as const;
 }
