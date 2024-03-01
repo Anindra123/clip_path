@@ -13,7 +13,9 @@ function App() {
 
   return (
     <>
-      <Canvas activePreset={activePreset} setActivePreset={setActivePreset} />
+      <div className="main_container">
+        <Canvas activePreset={activePreset} setActivePreset={setActivePreset} />
+      </div>
       <PresetBar handlePresetButtonClick={handlePresetButtonClick} />
     </>
   );

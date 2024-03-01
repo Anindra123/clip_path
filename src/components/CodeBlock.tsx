@@ -1,10 +1,11 @@
-export default function CodeBlock() {
-  return <div className="code_block">
-    <div className="title_block">
-      <p className="title">clip-path: </p>
+export default function CodeBlock({
+  clip_path_function,
+}: {
+  clip_path_function: string;
+}) {
+  return (
+    <div className="code_block">
+      <p className="code_text">clip-path: {clip_path_function} </p>
     </div>
-    <div className="function_block">
-      <p className="function">{ }</p>
-    </div>
-  </div>;
+  );
 }
