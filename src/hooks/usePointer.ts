@@ -1,4 +1,5 @@
 import { MAX_SIZE } from "../constants/Sizes";
+import PixelToPercentage from "../util/PixeltoPercentage";
 
 interface usePointerProp {
   pointerLocation: {
@@ -11,16 +12,16 @@ interface usePointerProp {
   id: number
 }
 
-export default function usePointer({ pointerLocation, setLocation, handleSetPath, id }: usePointerProp) {
+export default function usePointer({ pointerLocation,
+  setLocation, handleSetPath, id }: usePointerProp) {
 
   const temp_location = { ...pointerLocation };
 
   const initial_position = { x: 0, y: 0 };
 
 
-
   function handlePointerMouseDown(
-    event: React.MouseEvent<HTMLDivElement, MouseEvent>,
+    event: React.MouseEvent<SVGElement, MouseEvent>,
   ) {
 
     initial_position.x = event.clientX - temp_location.x;
@@ -28,30 +29,32 @@ export default function usePointer({ pointerLocation, setLocation, handleSetPath
 
     document.body.addEventListener("mousemove", handlePointerMouseMove);
     document.body.addEventListener("mouseup", handlePointerMouseUp);
+
   }
 
   function handlePointerMouseMove(event: MouseEvent) {
     const new_x_position =
       event.clientX -
-      (initial_position.x === 0 ? event.clientX : initial_position.x);
+      (initial_position.x === 0 ? event.clientX : (initial_position.x));
 
     const new_y_position =
       event.clientY -
-      (initial_position.y === 0 ? event.clientY : initial_position.y);
+      (initial_position.y === 0 ? event.clientY : (initial_position.y));
 
 
+    const boundedX = Math.max(Math.min(new_x_position, MAX_SIZE + 10), -10);
+    const boundedY = Math.max(Math.min(new_y_position, MAX_SIZE + 10), -10);
 
-    const boundedX = Math.max(Math.min(new_x_position, MAX_SIZE + 15), -15);
-    const boundedY = Math.max(Math.min(new_y_position, MAX_SIZE + 15), -15);
+    const boundedPathX = Math.max(Math.min(boundedX, MAX_SIZE), 0);
+    const boundedPathY = Math.max(Math.min(boundedY, MAX_SIZE), 0);
 
-    const pointerLocationX = 100 * ((boundedX) / MAX_SIZE);
-    const pointerLocationY = 100 * ((boundedY) / MAX_SIZE);
 
-    const clip_locationX = Math.max(Math.min(pointerLocationX, 100), 0);
-    const clip_locationY = Math.max(Math.min(pointerLocationY, 100), 0);
+    const pointerLocationX = PixelToPercentage(MAX_SIZE, boundedPathX);
+    const pointerLocationY = PixelToPercentage(MAX_SIZE, boundedPathY);
+
 
     setLocation({ x: boundedX, y: boundedY });
-    handleSetPath({ x: clip_locationX, y: clip_locationY }, id);
+    handleSetPath({ x: pointerLocationX, y: pointerLocationY }, id);
   }
 
   function handlePointerMouseUp() {

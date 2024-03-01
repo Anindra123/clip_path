@@ -1,7 +1,18 @@
 #root {
-  max-width: 1280px;
-  margin: 0 auto;
+  /* max-width: 1280px; */
+  /* margin: 0 auto; */
   text-align: center;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+.main_container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding-top: 100px;
 }
 
 .image_canvas {
@@ -10,15 +21,17 @@
   border: 1px solid #242424;
   position: relative;
   user-select: none;
+  margin-bottom: 15px;
 }
 .clip_path_pointer {
-  width: 30px;
-  height: 30px;
-  border-radius: 100%;
-  background-color: rgba(255, 0, 0, 0.5);
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: rgba(0, 200, 0, 1);
   position: absolute;
   cursor: grab;
   z-index: 20;
+  transform-origin: center;
 }
 
 .preset_button {
@@ -53,10 +66,10 @@
   font-size: 10px;
 }
 .preset_bar {
-  position: fixed;
+  /* position: fixed;
   right: 0;
   top: 0;
-  bottom: 0;
+  bottom: 0; */
   width: 400px;
   height: 100vh;
   padding: 20px;
@@ -79,4 +92,39 @@
   stroke: red;
 
   cursor: pointer;
+}
+
+.error_message_container {
+  width: 300px;
+  border-radius: 8px;
+  background-color: rgba(255, 0, 0, 0.3);
+  height: 20px;
+
+  padding-block: 10px;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  transition: all 0.3s ease;
+}
+
+.error_message {
+  font-size: 12px;
+  color: red;
+  font-weight: bold;
+  margin-left: 10px;
+}
+
+.code_block {
+  width: 300px;
+  background-color: #242424;
+  border-radius: 8px;
+  padding-block: 10px;
+}
+
+.code_text {
+  margin-left: 10px;
+  font-size: 12px;
+  color: #4ade80;
+  font-weight: bold;
+  text-align: left;
 }
