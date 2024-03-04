@@ -1,9 +1,10 @@
 import BackgroundImage from "../assets/pittsburgh.jpg";
 import CreatePathString from "../util/CreatePathString";
 import Indicator from "./Indicator";
-import { useEffect, useState } from "react";
+import { ElementRef, useEffect, useRef, useState } from "react";
 import Pointer from "./Pointer";
 import CodeBlock from "./CodeBlock";
+import GetPolygonCenter from "../util/GetPolygonCenter";
 
 interface CanvasProp {
   activePreset: { x: number; y: number }[];
@@ -17,8 +18,11 @@ export default function Canvas({ activePreset, setActivePreset }: CanvasProp) {
     ...activePreset,
   ]);
 
+  const image_canvas_ref = useRef<ElementRef<"div">>(null);
+
   const [errorMessage, setErrorMessage] = useState("");
   const [deletedPoints, setDeletedPoints] = useState<number[]>([]);
+  // const max_polygon_area = GetPolygonArea([...activePreset]);
 
   function handleSetPath(updated_path: { x: number; y: number }, id: number) {
     const temp_path = [...path];
@@ -30,40 +34,59 @@ export default function Canvas({ activePreset, setActivePreset }: CanvasProp) {
     setPath([...activePreset]);
   }, [activePreset]);
 
-  useEffect(() => {
-    function handleDelete(e: KeyboardEvent) {
-      const temp_points = [...activePreset];
+  function handleDelete(e: KeyboardEvent) {
+    e.preventDefault();
+    if (e.key === "Backspace" && deletedPoints.length > 0) {
+      const temp_points = [...path];
 
-      if (e.key === "Backspace" && deletedPoints.length > 0) {
-        if (temp_points.length > 3) {
-          const filtered_points = temp_points.filter((point, idx) => {
-            if (!deletedPoints.includes(idx)) return point;
-          });
-          setDeletedPoints([]);
-          setActivePreset(filtered_points);
-        } else {
-          setErrorMessage("Minimum 3 pointers are required");
-        }
+      if (temp_points.length > 3) {
+        const filtered_points = temp_points.filter((point, idx) => {
+          if (!deletedPoints.includes(idx)) return point;
+        });
+        setDeletedPoints([]);
+        setPath(filtered_points);
+      } else {
+        setErrorMessage("Minimum 3 pointers are required");
       }
     }
-    document.body.addEventListener("keyup", handleDelete);
-    return () => document.body.removeEventListener("keyup", handleDelete);
+  }
+  useEffect(() => {
+    window.addEventListener("keyup", handleDelete);
+    return () => window.removeEventListener("keyup", handleDelete);
   });
 
-  function handleScale(e: KeyboardEvent | MouseEvent) {
-    console.log(e.ctrlKey);
-    //TODO : implement scaling
-  }
+  function handleScale(e: WheelEvent) {
+    e.preventDefault();
+    const new_path: { x: number; y: number }[] = [];
+    const temp_path = [...path];
+    if (e.ctrlKey && e.deltaY) {
+      const scaleFactor = e.deltaY * 0.03;
+      const polygon_center = GetPolygonCenter([...activePreset]);
 
+      temp_path.forEach((path, id) => {
+        let { x, y } = { ...path };
+
+        if (x > polygon_center.x) x -= scaleFactor;
+        if (x < polygon_center.x) x += scaleFactor;
+        if (y > polygon_center.y) y -= scaleFactor;
+        if (y < polygon_center.y) y += scaleFactor;
+        const boundedX = Math.min(Math.max(x, 0), activePreset[id].x);
+        const boundedY = Math.min(Math.max(y, 0), activePreset[id].y);
+
+        console.log(boundedX, boundedY);
+
+        new_path.push({ x: x, y: y });
+      });
+      setPath(new_path);
+    }
+  }
   useEffect(() => {
-    document.body.addEventListener("keydown", handleScale);
-    document.body.addEventListener("wheel", handleScale, {
+    window.addEventListener("wheel", handleScale, {
       passive: false,
     });
 
     return () => {
-      document.body.removeEventListener("keydown", handleScale);
-      document.body.removeEventListener("wheel", handleScale);
+      window.removeEventListener("wheel", handleScale);
     };
   });
 
@@ -77,8 +100,8 @@ export default function Canvas({ activePreset, setActivePreset }: CanvasProp) {
       >
         <p className="error_message">{errorMessage}</p>
       </div>
-      <div className="image_canvas">
-        {activePreset.map((coordinates, id) => (
+      <div className="image_canvas" ref={image_canvas_ref}>
+        {path.map((coordinates, id) => (
           <Pointer
             handleSetPath={handleSetPath}
             coordinates={coordinates}

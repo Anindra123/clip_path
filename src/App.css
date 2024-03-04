@@ -115,7 +115,7 @@
 }
 
 .code_block {
-  width: 300px;
+  max-width: 300px;
   background-color: #242424;
   border-radius: 8px;
   padding-block: 10px;
@@ -123,7 +123,7 @@
 
 .code_text {
   margin-left: 10px;
-  font-size: 12px;
+  font-size: 11px;
   color: #4ade80;
   font-weight: bold;
   text-align: left;

@@ -25,10 +25,9 @@ export default function Pointer({
   temp_location.x = PercentageToPixel(MAX_SIZE, temp_location.x);
   temp_location.y = PercentageToPixel(MAX_SIZE, temp_location.y);
 
-  const [location, setLocation] = useState<{ x: number; y: number }>({
-    x: temp_location.x,
-    y: temp_location.y,
-  });
+  const [location, setLocation] = useState<{ x: number; y: number }>(
+    temp_location
+  );
 
   const [handlePointerMouseDown, handlePointerMouseUp] = usePointer({
     pointerLocation: { ...location },
@@ -54,6 +53,9 @@ export default function Pointer({
       }
     }
   };
+  useEffect(() => {
+    setLocation({ x: temp_location.x, y: temp_location.y });
+  }, [temp_location.x, temp_location.y]);
 
   useEffect(() => {
     const temp_location = { ...coordinates };
