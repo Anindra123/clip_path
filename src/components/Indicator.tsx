@@ -1,5 +1,7 @@
+import { ElementRef } from "react";
 import { CONTAINER_SIZE } from "../constants/Sizes";
 import PercentageToPixel from "../util/PercentageToPixel";
+import PixelToPercentage from "../util/PixeltoPercentage";
 
 interface IndicatorProp {
   point1: { x1: number; y1: number };
@@ -8,6 +10,7 @@ interface IndicatorProp {
   setActivePreset: React.Dispatch<
     React.SetStateAction<{ x: number; y: number }[]>
   >;
+  imageCanvasRef: React.RefObject<ElementRef<"div">>;
   id: number;
 }
 
@@ -16,6 +19,7 @@ export default function Indicator({
   point2,
   path,
   setActivePreset,
+  imageCanvasRef,
   id,
 }: IndicatorProp) {
   const x1 = PercentageToPixel(CONTAINER_SIZE, point1.x1);
@@ -25,14 +29,11 @@ export default function Indicator({
   const path_string = `${x1} ${y1}, ${x2} ${y2}`;
 
   function handleSetPoint(e: React.MouseEvent<SVGPolylineElement, MouseEvent>) {
-    const image_canvas = document.querySelector(".image_canvas");
-    const pointerX =
-      100 *
-      ((e.clientX - image_canvas!.getBoundingClientRect().x) / CONTAINER_SIZE);
-
-    const pointerY =
-      100 *
-      ((e.clientY - image_canvas!.getBoundingClientRect().y) / CONTAINER_SIZE);
+    const image_canvas = imageCanvasRef.current;
+    const distance_X = e.clientX - image_canvas!.getBoundingClientRect().x;
+    const distance_Y = e.clientY - image_canvas!.getBoundingClientRect().y;
+    const pointerX = PixelToPercentage(CONTAINER_SIZE, distance_X);
+    const pointerY = PixelToPercentage(CONTAINER_SIZE, distance_Y);
 
     const curr_id = Number(e.currentTarget.id);
 

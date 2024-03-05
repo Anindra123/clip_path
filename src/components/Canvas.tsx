@@ -5,6 +5,7 @@ import { ElementRef, useEffect, useRef, useState } from "react";
 import Pointer from "./Pointer";
 import CodeBlock from "./CodeBlock";
 import GetPolygonCenter from "../util/GetPolygonCenter";
+import ClipPathMover from "./ClipPathMover";
 
 interface CanvasProp {
   activePreset: { x: number; y: number }[];
@@ -19,15 +20,13 @@ export default function Canvas({ activePreset, setActivePreset }: CanvasProp) {
   ]);
 
   const image_canvas_ref = useRef<ElementRef<"div">>(null);
-
   const [errorMessage, setErrorMessage] = useState("");
   const [deletedPoints, setDeletedPoints] = useState<number[]>([]);
-  // const max_polygon_area = GetPolygonArea([...activePreset]);
 
   function handleSetPath(updated_path: { x: number; y: number }, id: number) {
     const temp_path = [...path];
     temp_path[id] = updated_path;
-    setPath(temp_path);
+    setActivePreset(temp_path);
   }
 
   useEffect(() => {
@@ -44,7 +43,7 @@ export default function Canvas({ activePreset, setActivePreset }: CanvasProp) {
           if (!deletedPoints.includes(idx)) return point;
         });
         setDeletedPoints([]);
-        setPath(filtered_points);
+        setActivePreset(filtered_points);
       } else {
         setErrorMessage("Minimum 3 pointers are required");
       }
@@ -58,28 +57,34 @@ export default function Canvas({ activePreset, setActivePreset }: CanvasProp) {
   function handleScale(e: WheelEvent) {
     e.preventDefault();
     const new_path: { x: number; y: number }[] = [];
-    const temp_path = [...path];
+    const temp_path = [...activePreset];
     if (e.ctrlKey && e.deltaY) {
-      const scaleFactor = e.deltaY * 0.03;
+      const scaleFactor = e.deltaY < 1 ? 1.05 : 0.98;
       const polygon_center = GetPolygonCenter([...activePreset]);
+      let isBoundaryCrossed = false;
 
-      temp_path.forEach((path, id) => {
-        let { x, y } = { ...path };
+      temp_path.forEach((path) => {
+        const { x, y } = { ...path };
+        const distance_x = x - polygon_center.x;
+        const distance_y = y - polygon_center.y;
 
-        if (x > polygon_center.x) x -= scaleFactor;
-        if (x < polygon_center.x) x += scaleFactor;
-        if (y > polygon_center.y) y -= scaleFactor;
-        if (y < polygon_center.y) y += scaleFactor;
-        const boundedX = Math.min(Math.max(x, 0), activePreset[id].x);
-        const boundedY = Math.min(Math.max(y, 0), activePreset[id].y);
+        const scaled_x = distance_x * scaleFactor;
+        const scaled_y = distance_y * scaleFactor;
 
-        console.log(boundedX, boundedY);
+        const newX = scaled_x + polygon_center.x;
+        const newY = scaled_y + polygon_center.y;
 
-        new_path.push({ x: x, y: y });
+        if (newX > 100 || newX < 0 || newY > 100 || newY < 0)
+          isBoundaryCrossed = true;
+
+        new_path.push({ x: newX, y: newY });
       });
-      setPath(new_path);
+      setActivePreset((prev) => {
+        return isBoundaryCrossed ? prev : new_path;
+      });
     }
   }
+
   useEffect(() => {
     window.addEventListener("wheel", handleScale, {
       passive: false,
@@ -101,7 +106,7 @@ export default function Canvas({ activePreset, setActivePreset }: CanvasProp) {
         <p className="error_message">{errorMessage}</p>
       </div>
       <div className="image_canvas" ref={image_canvas_ref}>
-        {path.map((coordinates, id) => (
+        {activePreset.map((coordinates, id) => (
           <Pointer
             handleSetPath={handleSetPath}
             coordinates={coordinates}
@@ -127,6 +132,7 @@ export default function Canvas({ activePreset, setActivePreset }: CanvasProp) {
                   x2: path[id + 1]?.x,
                   y2: path[id + 1]?.y,
                 }}
+                imageCanvasRef={image_canvas_ref}
                 key={id}
                 id={id}
                 setActivePreset={setActivePreset}
@@ -136,6 +142,7 @@ export default function Canvas({ activePreset, setActivePreset }: CanvasProp) {
               <Indicator
                 point1={{ x1: coord.x, y1: coord.y }}
                 point2={{ x2: path[0]?.x, y2: path[0]?.y }}
+                imageCanvasRef={image_canvas_ref}
                 key={id}
                 id={id}
                 setActivePreset={setActivePreset}
@@ -143,6 +150,11 @@ export default function Canvas({ activePreset, setActivePreset }: CanvasProp) {
               />
             )
           )}
+          <ClipPathMover
+            setActivePreset={setActivePreset}
+            image_canvas_ref={image_canvas_ref}
+            path={path}
+          />
         </svg>
         <img
           src={BackgroundImage}

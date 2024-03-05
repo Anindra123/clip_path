@@ -63,11 +63,6 @@ export default function Pointer({
     temp_location.x = PercentageToPixel(MAX_SIZE, temp_location.x);
     temp_location.y = PercentageToPixel(MAX_SIZE, temp_location.y);
 
-    if (temp_location.x <= 0) temp_location.x -= 10;
-    if (temp_location.x >= MAX_SIZE) temp_location.x += 10;
-    if (temp_location.y <= 0) temp_location.y -= 10;
-    if (temp_location.y >= MAX_SIZE) temp_location.y += 10;
-
     setLocation({ x: temp_location.x, y: temp_location.y });
   }, [coordinates]);
 
