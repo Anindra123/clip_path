@@ -42,8 +42,8 @@ export default function usePointer({ pointerLocation,
       (initial_position.y === 0 ? event.clientY : (initial_position.y));
 
 
-    const boundedX = Math.max(Math.min(new_x_position, MAX_SIZE + 10), -10);
-    const boundedY = Math.max(Math.min(new_y_position, MAX_SIZE + 10), -10);
+    const boundedX = Math.max(Math.min(new_x_position, MAX_SIZE), 0);
+    const boundedY = Math.max(Math.min(new_y_position, MAX_SIZE), 0);
 
     const boundedPathX = Math.max(Math.min(boundedX, MAX_SIZE), 0);
     const boundedPathY = Math.max(Math.min(boundedY, MAX_SIZE), 0);
