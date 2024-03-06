@@ -122,6 +122,7 @@ export default function Canvas({ activePreset, setActivePreset }: CanvasProp) {
             {path.map((coord, id) =>
               id < path.length - 1 ? (
                 <Indicator
+                  setDeletedPoints={setDeletedPoints}
                   point1={{ x1: coord.x, y1: coord.y }}
                   point2={{
                     x2: path[id + 1]?.x,
@@ -135,6 +136,7 @@ export default function Canvas({ activePreset, setActivePreset }: CanvasProp) {
                 />
               ) : (
                 <Indicator
+                  setDeletedPoints={setDeletedPoints}
                   point1={{ x1: coord.x, y1: coord.y }}
                   point2={{ x2: path[0]?.x, y2: path[0]?.y }}
                   imageCanvasRef={image_canvas_ref}
