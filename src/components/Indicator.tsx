@@ -11,6 +11,7 @@ interface IndicatorProp {
     React.SetStateAction<{ x: number; y: number }[]>
   >;
   imageCanvasRef: React.RefObject<ElementRef<"div">>;
+  setDeletedPoints: React.Dispatch<React.SetStateAction<number[]>>;
   id: number;
 }
 
@@ -20,6 +21,7 @@ export default function Indicator({
   path,
   setActivePreset,
   imageCanvasRef,
+  setDeletedPoints,
   id,
 }: IndicatorProp) {
   const x1 = PercentageToPixel(CONTAINER_SIZE, point1.x1);
@@ -40,7 +42,7 @@ export default function Indicator({
     const temp_path = [...path];
 
     temp_path.splice(curr_id + 1, 0, { x: pointerX, y: pointerY });
-
+    setDeletedPoints([]);
     setActivePreset(temp_path);
   }
   return (

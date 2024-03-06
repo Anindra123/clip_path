@@ -40,6 +40,41 @@ export default function PresetBar({ handlePresetButtonClick }: PresetBarProp) {
           setCurrentSelected={setCurrentSelected}
           currentSelected={currentSelected}
         />
+        <PresetButton
+          handlePresetButtonClick={handlePresetButtonClick}
+          preset_path={Presets.PENTAGON}
+          title="Pentagon"
+          setCurrentSelected={setCurrentSelected}
+          currentSelected={currentSelected}
+        />
+        <PresetButton
+          handlePresetButtonClick={handlePresetButtonClick}
+          preset_path={Presets.HEXAGON}
+          title="Hexagon"
+          setCurrentSelected={setCurrentSelected}
+          currentSelected={currentSelected}
+        />
+        <PresetButton
+          handlePresetButtonClick={handlePresetButtonClick}
+          preset_path={Presets.HEPTAGON}
+          title="Heptagon"
+          setCurrentSelected={setCurrentSelected}
+          currentSelected={currentSelected}
+        />
+        <PresetButton
+          handlePresetButtonClick={handlePresetButtonClick}
+          preset_path={Presets.OCTAGON}
+          title="Octagon"
+          setCurrentSelected={setCurrentSelected}
+          currentSelected={currentSelected}
+        />
+        <PresetButton
+          handlePresetButtonClick={handlePresetButtonClick}
+          preset_path={Presets.STAR}
+          title="Star"
+          setCurrentSelected={setCurrentSelected}
+          currentSelected={currentSelected}
+        />
       </div>
     </div>
   );
